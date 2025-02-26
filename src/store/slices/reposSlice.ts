@@ -8,6 +8,7 @@ interface ReposState {
   error: RepoSearchError | null;
   page: number;
   hasMore: boolean;
+  currentUsername: string | null;
 }
 
 const initialState: ReposState = {
@@ -16,20 +17,40 @@ const initialState: ReposState = {
   error: null,
   page: 1,
   hasMore: false,
+  currentUsername: null,
 };
 
 export const fetchUserRepos = createAsyncThunk(
   'repos/fetchUserRepos',
   async (
     { username, page }: { username: string; page: number },
-    { rejectWithValue, signal }
+    { rejectWithValue, signal, getState }
   ) => {
     try {
+      const { repos } = getState() as { repos: ReposState };
+
+      if (repos.currentUsername !== username) {
+        return [];
+      }
+
       const response = await fetchRepos(username, page, signal);
+      console.log(page);
+
       return response;
     } catch (error) {
       return rejectWithValue(error);
     }
+  },
+  {
+    condition: ({ username, page }, { getState }) => {
+      const { repos } = getState() as { repos: ReposState };
+
+      if (repos.loading === 'pending') return false;
+      if (repos.currentUsername === username && page <= repos.page)
+        return false;
+
+      return true;
+    },
   }
 );
 
@@ -42,23 +63,37 @@ const reposSlice = createSlice({
       state.page = 1;
       state.hasMore = false;
       state.error = null;
+      state.currentUsername = null;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchUserRepos.pending, (state) => {
+      .addCase(fetchUserRepos.pending, (state, action) => {
         state.loading = 'pending';
         state.error = null;
+
+        if (action.meta.arg.username !== state.currentUsername) {
+          state.repos = [];
+          state.page = 1;
+          state.hasMore = false;
+          state.currentUsername = action.meta.arg.username;
+        }
       })
       .addCase(fetchUserRepos.fulfilled, (state, action) => {
         state.loading = 'succeeded';
-        state.repos = [...state.repos, ...action.payload];
-        state.page += 1;
-        state.hasMore = action.payload.length === 20;
+
+        if (action.meta.arg.username === state.currentUsername) {
+          state.repos = [...state.repos, ...action.payload];
+          state.page = action.meta.arg.page + 1;
+          state.hasMore = action.payload.length === 20;
+        }
       })
       .addCase(fetchUserRepos.rejected, (state, action) => {
         state.loading = 'failed';
-        state.error = action.payload as RepoSearchError;
+
+        if (action.meta.arg.username === state.currentUsername) {
+          state.error = action.payload as RepoSearchError;
+        }
       });
   },
 });

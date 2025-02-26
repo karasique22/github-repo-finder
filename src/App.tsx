@@ -24,14 +24,16 @@ const App: React.FC = () => {
     [dispatch]
   );
 
-  const loadMore = useCallback(
-    debounce(() => {
-      if (hasMore && loading !== 'pending' && searchTerm) {
-        dispatch(fetchUserRepos({ username: searchTerm, page: page + 1 }));
-      }
-    }, 300),
-    [dispatch, hasMore, loading, searchTerm, page]
-  );
+  const loadMore = useCallback(() => {
+    if (hasMore && loading !== 'pending' && searchTerm) {
+      dispatch(
+        fetchUserRepos({
+          username: searchTerm,
+          page: page,
+        })
+      );
+    }
+  }, [dispatch, hasMore, loading, searchTerm, page]);
 
   useEffect(() => {
     return () => {
@@ -40,7 +42,7 @@ const App: React.FC = () => {
   }, [dispatch]);
 
   return (
-    <div className='container mx-auto px-4 py-8'>
+    <div className='container mx-auto px-4 py-8 overflow-hidden'>
       <h1 className='text-3xl font-bold mb-8 text-center'>
         GitHub Repository Search
       </h1>
