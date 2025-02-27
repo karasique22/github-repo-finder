@@ -39,6 +39,7 @@ const App: React.FC = () => {
         hasMore={hasMore}
         loader={<Loader />}
         scrollThreshold='100px'
+        className='overflow-y-none'
       >
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8'>
           {repos.map((repo) => (

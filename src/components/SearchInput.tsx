@@ -47,13 +47,12 @@ const SearchInput: React.FC<SearchInputProps> = ({ onSearch, isLoading }) => {
           } ${isLoading ? 'pr-16' : 'pr-4'}`}
           disabled={isLoading}
         />
-
-        {isLoading && <Loader />}
       </div>
 
       <div className='mt-2 text-sm text-gray-500 text-center'>
         Начните печатать для поиска
       </div>
+      {isLoading && <Loader classNames='align-self-end' />}
     </div>
   );
 };

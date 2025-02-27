@@ -34,7 +34,6 @@ export const fetchUserRepos = createAsyncThunk(
       }
 
       const response = await fetchRepos(username, page, signal);
-      console.log(page);
 
       return response;
     } catch (error) {
