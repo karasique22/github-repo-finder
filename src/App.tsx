@@ -1,39 +1,21 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { fetchUserRepos, resetRepos } from './store/slices/reposSlice';
-import { debounce } from 'lodash-es';
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import SearchInput from './components/SearchInput';
 import RepoCard from './components/RepoCard';
 import ErrorMessage from './components/common/Error';
 import Loader from './components/common/Loader';
+import useSearchRepos from './hooks/useSearchRepos';
+import useLoadMoreRepos from './hooks/useLoadMoreRepos';
+import { resetRepos } from './store/slices/reposSlice';
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { repos, loading, error, hasMore, page } = useAppSelector(
+  const { repos, loading, error, hasMore } = useAppSelector(
     (state) => state.repos
   );
-  const [searchTerm, setSearchTerm] = React.useState('');
-  const handleSearch = useCallback(
-    debounce((username: string) => {
-      if (username) {
-        dispatch(resetRepos());
-        dispatch(fetchUserRepos({ username, page: 1 }));
-      }
-    }, 500),
-    [dispatch]
-  );
-
-  const loadMore = useCallback(() => {
-    if (hasMore && loading !== 'pending' && searchTerm) {
-      dispatch(
-        fetchUserRepos({
-          username: searchTerm,
-          page: page,
-        })
-      );
-    }
-  }, [dispatch, hasMore, loading, searchTerm, page]);
+  const { searchTerm, handleSearch } = useSearchRepos();
+  const loadMore = useLoadMoreRepos(searchTerm);
 
   useEffect(() => {
     return () => {
@@ -47,13 +29,7 @@ const App: React.FC = () => {
         GitHub Repository Search
       </h1>
 
-      <SearchInput
-        onSearch={(term) => {
-          setSearchTerm(term);
-          handleSearch(term);
-        }}
-        isLoading={loading === 'pending'}
-      />
+      <SearchInput onSearch={handleSearch} isLoading={loading === 'pending'} />
 
       {error && <ErrorMessage message={error.message} className='my-4' />}
 
@@ -67,7 +43,7 @@ const App: React.FC = () => {
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8'>
           {repos.map((repo) => (
             <RepoCard
-              key={repo.id}
+              key={`${repo.id}-${repo.updated_at}`}
               full_name={repo.full_name}
               description={repo.description}
               stars={repo.stargazers_count}

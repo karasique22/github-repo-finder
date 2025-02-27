@@ -84,7 +84,7 @@ const reposSlice = createSlice({
 
         if (action.meta.arg.username === state.currentUsername) {
           state.repos = [...state.repos, ...action.payload];
-          state.page = action.meta.arg.page + 1;
+          state.page = action.meta.arg.page;
           state.hasMore = action.payload.length === 20;
         }
       })
