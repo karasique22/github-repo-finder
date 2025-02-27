@@ -1,50 +1,63 @@
-# React + TypeScript + Vite
+# GitHub Repo Finder
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+GitHub Repo Finder - это веб-приложение, созданное с использованием React, TypeScript и Vite. Оно позволяет пользователям искать репозитории GitHub и просматривать информацию о них.
 
-Currently, two official plugins are available:
+## Возможности
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Просмотр информации о репозитории, такой как название, описание, количество звезд и дата последнего обновления
 
-## Expanding the ESLint configuration
+## Используемые технологии
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- React
+- TypeScript
+- Vite
+- Redux Toolkit
+- Tailwind CSS
+- Axios
 
-- Configure the top-level `parserOptions` property like this:
+## Начало работы
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+### Предварительные требования
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+- Docker
+- Docker Compose
+- Node.js
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+### Запуск проекта с использованием Docker
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+1. Клонируйте репозиторий:
+
+   ```sh
+   git clone https://github.com/karasique22/github-repo-finder.git
+   cd github-repo-finder
+   ```
+
+2. Соберите и запустите контейнеры Docker:
+
+   ```sh
+   docker-compose up --build
+   ```
+
+3. Откройте браузер и перейдите по адресу `http://localhost:4173`, чтобы увидеть приложение.
+
+### Разработка
+
+Чтобы запустить проект локально без Docker, выполните следующие шаги:
+
+1. Установите зависимости:
+
+   ```sh
+   npm install
+   ```
+
+2. Запустите сервер разработки:
+
+   ```sh
+   npm run dev
+   ```
+
+3. Откройте браузер и перейдите по адресу `http://localhost:5173`, чтобы увидеть приложение.
+
+## Лицензия
+
+Этот проект лицензирован по лицензии MIT.
