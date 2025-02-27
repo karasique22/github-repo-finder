@@ -12,7 +12,7 @@ export const fetchRepos = async (
 ): Promise<Repo[]> => {
   try {
     if (cancelTokenSource) {
-      cancelTokenSource.cancel('Operation canceled by new request');
+      cancelTokenSource.cancel('Запрос отменен');
     }
     cancelTokenSource = axios.CancelToken.source();
 
@@ -41,11 +41,11 @@ export const fetchRepos = async (
     const axiosError = error as AxiosError;
 
     if (axios.isCancel(error)) {
-      throw { message: 'Request canceled', status: 0 };
+      throw { message: 'Запрос отменен', status: 0 };
     }
 
     const errorData: RepoSearchError = {
-      message: 'Unknown error',
+      message: 'Произошла ошибка при загрузке репозиториев',
       status: 500,
     };
 
@@ -53,10 +53,10 @@ export const fetchRepos = async (
       errorData.status = axiosError.response.status;
       switch (axiosError.response.status) {
         case 404:
-          errorData.message = 'User not found';
+          errorData.message = 'Такой пользователь не найден';
           break;
         case 403:
-          errorData.message = 'API rate limit exceeded';
+          errorData.message = 'Запросы к API превысили лимит, попробуйте позже';
           break;
         default:
           errorData.message = axiosError.message;
